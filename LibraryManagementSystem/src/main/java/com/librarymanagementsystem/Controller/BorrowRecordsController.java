@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.librarymanagementsystem.DTO.BorrowRecordsDTO;
 import com.librarymanagementsystem.DTO.BorrowRecordsDTO2;
 import com.librarymanagementsystem.Service.BorrowRecordsService;
 @RestController
+@RequestMapping("/librarian")
 public class BorrowRecordsController {
 	@Autowired
 	private BorrowRecordsService borrowRecordsService;

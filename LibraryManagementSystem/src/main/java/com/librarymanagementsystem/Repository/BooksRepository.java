@@ -13,5 +13,6 @@ import com.librarymanagementsystem.Entity.Categories;
 public interface BooksRepository extends JpaRepository<Books, Long> {
 	List<Books> findAllByCategory(Categories category);
 	Optional<Books> findByTitle(String bookName);
+	Optional<Books> findByIsbn(String isbn);
 
 }

@@ -22,7 +22,7 @@ public class CategoriesService  {
 	public ResponseEntity<String> addCategory(CategoriesDTO categoryDto) {
 	 Optional<Categories> checking=categoriesRepository.findByCategoryName(categoryDto.getCategoryName());
 	 if(checking.isPresent()) {
-		 throw new RuntimeException("Category Already Present");
+		 return new ResponseEntity<>("Category Already Present",HttpStatus.OK);
 	 }
 		Categories category=new Categories();
 		category.setCategoryName(categoryDto.getCategoryName());
@@ -38,14 +38,14 @@ public class CategoriesService  {
 		return new ResponseEntity<>("Category Deleted",HttpStatus.OK);
 		}
 		else {
-		throw new CategoryNotFoundException("Category with ID " + id + " not found");
+		return new ResponseEntity<>("Category with ID " + id + " not found",HttpStatus.OK);
 		}
 	}
 
 	public List<CategoriesDTO2> getAllCategories() {
-		List<Categories> list = categoriesRepository.findAll();
-		List<CategoriesDTO2> dtoList = new ArrayList<>();
-
+		   List<Categories> list = categoriesRepository.findAll();
+	       List<CategoriesDTO2> dtoList = new ArrayList<>();
+ 
 		for (Categories category : list) {
 		    CategoriesDTO2 dto = new CategoriesDTO2();
 		    dto.setId(category.getId());

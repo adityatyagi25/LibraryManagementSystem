@@ -18,7 +18,7 @@ public class RolesService {
 	public ResponseEntity<String> addRole(RolesDTO role) {
 		Optional<Roles> roles=rolesRepository.findByRole(role.getRole());
 		if(roles.isPresent()) {
-			return new ResponseEntity<>("Role Already Exists ",HttpStatus.CONFLICT);
+			return new ResponseEntity<>("Role Already Exists ",HttpStatus.OK);
 		}
 		else {
 		Roles rolee=roles.get();
@@ -35,7 +35,7 @@ public class RolesService {
 		return new ResponseEntity<>("Role Deleted ",HttpStatus.OK);
 		}
 		else {
-			return new ResponseEntity<>("Role with id "+id+" is not found",HttpStatus.NOT_FOUND);	
+			return new ResponseEntity<>("Role with id "+id+" is not found",HttpStatus.OK);	
 		}
 	}
 	

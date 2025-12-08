@@ -23,16 +23,27 @@ public class BooksService {
 	private CategoriesRepository categoriesRepository;
 
 	public ResponseEntity<String> addBook(BooksDTO bookDTO) {
+		if(bookDTO.getTotalCopies()<1) {
+			return new ResponseEntity<>("The total copies should be more than 0",HttpStatus.OK);
+		}
+        Optional<Books> checkisbn=booksRepository.findByIsbn(bookDTO.getIsbn());
+        if(checkisbn.isPresent()) {
+        	return new ResponseEntity<>("Book with same Isbn already Present",HttpStatus.OK);
+        }
+		
 		Optional<Books> checkBook=booksRepository.findByTitle(bookDTO.getTitle());
 		if(checkBook.isEmpty()) {
 		Books book=new Books();
 		book.setAuthor(bookDTO.getAuthor());
 		book.setAvailableCopies(bookDTO.getTotalCopies());
 		book.setTotalCopies(bookDTO.getTotalCopies());
-		 Categories category = categoriesRepository
-		            .findByCategoryName(bookDTO.getCategory())
-		            .orElseThrow(() -> new RuntimeException("Category not found"));
-		 book.setCategory(category);
+		 Optional<Categories> category = categoriesRepository
+		            .findByCategoryName(bookDTO.getCategory());
+		 if(category.isEmpty()) {
+			 return new ResponseEntity<>("Category Not Found",HttpStatus.OK);
+		 }
+		 Categories categoryy=category.get();
+		 book.setCategory(categoryy);
 
 		book.setIsbn(bookDTO.getIsbn());
 		book.setTitle(bookDTO.getTitle());
@@ -40,32 +51,26 @@ public class BooksService {
 		return new ResponseEntity<>("Book Saved",HttpStatus.OK);
 		}
 		else {
-		return new ResponseEntity<>("Book Already Exists",HttpStatus.CONFLICT);	
+		return new ResponseEntity<>("Book Already Exists",HttpStatus.OK);	
 		}
 	}
-
-	public ResponseEntity<String> updateBook(Books book, long id) {
-		Books updatedBooks = booksRepository.findById(id)
-				.orElseThrow(() -> new BookNotFoundException("No book Found with id " + id ));
-		updatedBooks.setAuthor(book.getAuthor());
-		updatedBooks.setTitle(book.getTitle());
-		updatedBooks.setIsbn(book.getIsbn());
-		updatedBooks.setTotalCopies(book.getTotalCopies());
-		booksRepository.save(updatedBooks);
-		return new ResponseEntity<>("Book Updated",HttpStatus.OK);
-	}
-
 	public ResponseEntity<String> deleteBook(long id) {
-		booksRepository.findById(id)
-		.orElseThrow(() -> new BookNotFoundException("No book Found with id " + id ));
+	  Optional<Books> book=	booksRepository.findById(id);
+	  if(book.isEmpty()) {
+		 return new ResponseEntity<>("Book Not Found",HttpStatus.OK);
+	  }
+	  
 		booksRepository.deleteById(id);	
 		return new ResponseEntity<>("Book Deleted",HttpStatus.OK);
 	}
 
-	public ResponseEntity<Books> findBookById(long id) {
-		Books book=booksRepository.findById(id)
-				.orElseThrow(() -> new BookNotFoundException("No book Found with id " + id));
-		return new ResponseEntity<>(book,HttpStatus.OK);	
+	public ResponseEntity<?> findBookById(long id) {
+		Optional<Books> book=booksRepository.findById(id);
+		if(book.isEmpty()) {
+			return new ResponseEntity<>("No Book found with id"+id,HttpStatus.OK);
+		}
+		Books books=book.get();
+		return new ResponseEntity<>(books,HttpStatus.OK);	
 	}
 
 	public List<Books> findAll() {
@@ -78,11 +83,8 @@ public class BooksService {
 		return new ResponseEntity<>(booksRepository.findAllByCategory(var.get()),HttpStatus.OK);
 		}
 		else {
-		return new ResponseEntity<>("No Category Found",HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>("No Category Found",HttpStatus.OK);
 		}
 
 	}
-	
-
-	 
 }

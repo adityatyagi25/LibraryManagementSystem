@@ -36,13 +36,18 @@ public class BorrowRecordsService {
 		 return BorrowRecordsMapper.toDto(borrowRecordsRepository.findById(id).orElseThrow(()->new NoRecordFoundException("No record Found with id: "+id)));
 	}
 	public ResponseEntity<String> borrowBook(BorrowRecordsDTO2 borrowRecords) {
-		   Books existingBook = booksRepository.findByTitle(borrowRecords.getBookName())
-			    .orElseThrow(() -> new RuntimeException("Book not found"));
-
-		   Users existingUser = usersRepository.findById(borrowRecords.getUserEmail())
-				   .orElseThrow(() -> new RuntimeException("User not found"));  
+		   Optional<Books> existingBok = booksRepository.findByTitle(borrowRecords.getBookName());
+		   if(existingBok.isEmpty()) {
+			   return new ResponseEntity<>("Book not found!!",HttpStatus.OK);
+		   }
+           Books existingBook=existingBok.get();
+		   Optional<Users> existingUsr = usersRepository.findById(borrowRecords.getUserEmail()); 
+		   if(existingUsr.isEmpty()) {
+			   return new ResponseEntity<>("User not found!!",HttpStatus.OK);
+		   }
+           Users existingUser=existingUsr.get();
 		   if(existingBook.getAvailableCopies()==0||existingBook.getAvailableCopies()<0) {
-			   throw new BookNotFoundException("There are no available copies of the book available");
+			   return new ResponseEntity<>("There are no available copies of the book available",HttpStatus.OK);
 		   }
 		   int availableCopies=existingBook.getAvailableCopies();
 		   existingBook.setAvailableCopies(availableCopies-1);
@@ -68,7 +73,7 @@ public class BorrowRecordsService {
 		return new ResponseEntity<>("Book Returned",HttpStatus.OK);
 		}
 		else {
-		return new ResponseEntity<>("Book Already Returned",HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>("Book Already Returned",HttpStatus.OK);
 		}
 	}
 
