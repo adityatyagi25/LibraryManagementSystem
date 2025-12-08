@@ -19,7 +19,7 @@ import com.librarymanagementsystem.Service.BooksService;
 public class BooksController {
 	@Autowired
     private BooksService booksService;
-	@PostMapping("/addBook")
+	@PostMapping("/addBook")// this is to add book
 	public ResponseEntity<String> addBook(@RequestBody BooksDTO book) {
 		if(book.getTotalCopies()<0) {
 			throw new RuntimeException("The total copies should be more than 0");
