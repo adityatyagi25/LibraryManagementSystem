@@ -1,6 +1,8 @@
 package com.librarymanagementsystem.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,24 +10,41 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.librarymanagementsystem.DTO.UsersDTO;
+import com.librarymanagementsystem.Entity.Roles;
 import com.librarymanagementsystem.Entity.Users;
+import com.librarymanagementsystem.Repository.RolesRepository;
 import com.librarymanagementsystem.Repository.UsersRepository;
 
 @Service
 public class UsersService {
 	@Autowired
+	private RolesRepository rolesRepository;
+	@Autowired
 	private UsersRepository usersRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	public ResponseEntity<String> addUser(Users user) {
+	public ResponseEntity<String> addUser(UsersDTO userDTO) {
+		 if (userDTO.getPassword() == null || userDTO.getPassword().isBlank()) {
+		        return new ResponseEntity<>("Password can't be null or empty",HttpStatus.OK);
+		  }
+		 Users user=new Users();
+		 user.setEmail(userDTO.getEmail());
+		 user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+		 Optional<Roles> roleEntity = rolesRepository.findByRole(userDTO.getRole());
+	        Set<Roles> roles = new HashSet<>();
+	        if (roleEntity.isPresent()) {
+	            roles.add(roleEntity.get());
+	        }
+	        else {
+	            return new ResponseEntity<>("Please use proper roles ie. (USER , ADMIN or LIBRARIAN)",HttpStatus.OK);
+	        }
+	        user.setRoles(roles);
 		if(usersRepository.findById(user.getEmail()).isPresent()) {
-		throw new RuntimeException("User Already Exists");	
+        return new ResponseEntity<>("User Already Exists",HttpStatus.OK);
+		
 		}
-		Users newUser=new Users();
-		newUser.setEmail(user.getEmail());
-		newUser.setPassword(passwordEncoder.encode(user.getPassword()));
-		newUser.setRoles(user.getRoles());
-		usersRepository.save(newUser);
+		usersRepository.save(user);
 		return new ResponseEntity<>("User Added Successfully",HttpStatus.OK);
 	}
 	public ResponseEntity<String> deleteUser(String email) {
@@ -36,7 +55,7 @@ public class UsersService {
 	   }
 	   else
 	   {
-	   return new ResponseEntity<>("User Not Found",HttpStatus.NOT_FOUND);  
+       return new ResponseEntity<>("User Not Found",HttpStatus.OK);
 	   }
 		
 	}
