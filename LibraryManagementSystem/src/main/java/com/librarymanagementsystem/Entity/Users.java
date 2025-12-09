@@ -35,8 +35,7 @@ public class Users {
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-
     private Set<Roles> roles = new HashSet<>();
-
+	private boolean isVerified;
 }
  

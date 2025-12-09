@@ -19,6 +19,8 @@ import com.librarymanagementsystem.Repository.UsersRepository;
 @Service
 public class UsersService {
 	@Autowired
+	private VerificationTokenService verificationTokenService;
+	@Autowired
 	private RolesRepository rolesRepository;
 	@Autowired
 	private UsersRepository usersRepository;
@@ -45,7 +47,10 @@ public class UsersService {
 		
 		}
 		usersRepository.save(user);
+	    String token=verificationTokenService.generateVerificationToken(user);
+		verificationTokenService.sendVerificationEmail(user.getEmail(), token);
 		return new ResponseEntity<>("User Added Successfully",HttpStatus.OK);
+		
 	}
 	public ResponseEntity<String> deleteUser(String email) {
 	   Optional<Users> checkUser=usersRepository.findById(email);
