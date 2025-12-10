@@ -4,6 +4,7 @@ package com.librarymanagementsystem.Controller;
 
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.librarymanagementsystem.DTO.LoginDTO;
+import com.librarymanagementsystem.Repository.UsersRepository;
 import com.librarymanagementsystem.Security.JwtUtil;
 import com.librarymanagementsystem.Security.UserPrinciple;
 
@@ -23,17 +25,21 @@ public class AuthController {
 
     private final AuthenticationManager authManager;
     private final JwtUtil jwtUtil;
+    @Autowired
+    private UsersRepository usersRepository;
 
     public AuthController(AuthenticationManager authManager, JwtUtil jwtUtil) {
         this.authManager = authManager;
         this.jwtUtil = jwtUtil;
     }
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO login) {
         String email = login.getEmail();
         String password = login.getPassword();
-
+        if(usersRepository.findById(email).get().isVerified()==false)   {
+        	return new ResponseEntity<>("User not Verified",HttpStatus.OK);
+        }
+        
         try {
             Authentication authentication = authManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password)

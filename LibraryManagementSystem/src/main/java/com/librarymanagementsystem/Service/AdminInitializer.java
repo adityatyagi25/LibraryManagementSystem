@@ -44,6 +44,7 @@ public class AdminInitializer implements CommandLineRunner {
             Users admin = new Users();
             admin.setEmail("admin@gmail.com");
             admin.setPassword(passwordEncoder.encode("admin"));
+            admin.setVerified(true);
             admin.setRoles(Set.of(adminRole));
             userRepository.save(admin);
             System.out.println("✅ Admin user created: admin@gmail.com / password: admin");

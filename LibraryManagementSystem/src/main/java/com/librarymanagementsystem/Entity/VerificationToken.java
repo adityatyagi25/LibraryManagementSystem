@@ -3,6 +3,7 @@ package com.librarymanagementsystem.Entity;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +29,7 @@ public class VerificationToken {
     private Users user;
 
     private LocalDateTime expiryDate;
-    
-    //valid, expired, used
+    @Enumerated
+    private Status status;
+   
 }

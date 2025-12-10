@@ -15,6 +15,7 @@ import com.librarymanagementsystem.Entity.Roles;
 import com.librarymanagementsystem.Entity.Users;
 import com.librarymanagementsystem.Repository.RolesRepository;
 import com.librarymanagementsystem.Repository.UsersRepository;
+import com.librarymanagementsystem.Repository.VerificationTokenRepo;
 
 @Service
 public class UsersService {
@@ -26,6 +27,7 @@ public class UsersService {
 	private UsersRepository usersRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
 	public ResponseEntity<String> addUser(UsersDTO userDTO) {
 		 if (userDTO.getPassword() == null || userDTO.getPassword().isBlank()) {
 		        return new ResponseEntity<>("Password can't be null or empty",HttpStatus.OK);
@@ -46,8 +48,9 @@ public class UsersService {
         return new ResponseEntity<>("User Already Exists",HttpStatus.OK);
 		
 		}
+		
 		usersRepository.save(user);
-	    String token=verificationTokenService.generateVerificationToken(user);
+		String token=verificationTokenService.generateVerificationToken(user);
 		verificationTokenService.sendVerificationEmail(user.getEmail(), token);
 		return new ResponseEntity<>("User Added Successfully",HttpStatus.OK);
 		
