@@ -24,6 +24,9 @@ public class CategoriesService  {
 	 if(checking.isPresent()) {
 		 return new ResponseEntity<>("Category Already Present",HttpStatus.OK);
 	 }
+	 if(categoryDto.getCategoryName().length()>20||categoryDto.getCategoryName().length()<2) {
+		 return new ResponseEntity<>("Please use characters between 2 and 20",HttpStatus.OK);
+	 }
 		Categories category=new Categories();
 		category.setCategoryName(categoryDto.getCategoryName());
 		categoriesRepository.save(category);

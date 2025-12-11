@@ -36,6 +36,9 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginDTO login) {
         String email = login.getEmail();
         String password = login.getPassword();
+        if(usersRepository.findById(email).isEmpty()) {
+        	return new ResponseEntity<>("User not Found with id "+email,HttpStatus.OK);
+        }
         if(usersRepository.findById(email).get().isVerified()==false)   {
         	return new ResponseEntity<>("User not Verified",HttpStatus.OK);
         }
@@ -58,9 +61,9 @@ public class AuthController {
 
         } catch (BadCredentialsException ex) {
             return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
+                    .status(HttpStatus.OK)
                     .body(Map.of(
-                            "error", "Invalid email or password"
+                            "error", "Invalid password"
                     ));
         } catch (Exception ex) {
             // ⚠️ Unexpected error

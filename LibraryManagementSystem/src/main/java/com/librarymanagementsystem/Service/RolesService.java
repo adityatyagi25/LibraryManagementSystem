@@ -17,11 +17,14 @@ public class RolesService {
 
 	public ResponseEntity<String> addRole(RolesDTO role) {
 		Optional<Roles> roles=rolesRepository.findByRole(role.getRole());
+		if(role.getRole().length()>20||role.getRole().length()<2) {
+			return new ResponseEntity<>("Please use 2-20 characters... ",HttpStatus.OK);
+		}
 		if(roles.isPresent()) {
 			return new ResponseEntity<>("Role Already Exists ",HttpStatus.OK);
 		}
 		else {
-		Roles rolee=roles.get();
+		Roles rolee=new Roles();
 		rolee.setRole(role.getRole());
 		rolesRepository.save(rolee);
 		return new ResponseEntity<>("Role Added ",HttpStatus.OK);

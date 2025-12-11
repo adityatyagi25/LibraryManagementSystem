@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.librarymanagementsystem.DTO.BooksDTO;
 import com.librarymanagementsystem.Entity.Books;
 import com.librarymanagementsystem.Entity.Categories;
-import com.librarymanagementsystem.Exception.BookNotFoundException;
 import com.librarymanagementsystem.Repository.BooksRepository;
 import com.librarymanagementsystem.Repository.CategoriesRepository;
 
@@ -23,6 +22,11 @@ public class BooksService {
 	private CategoriesRepository categoriesRepository;
 
 	public ResponseEntity<String> addBook(BooksDTO bookDTO) {
+		if(bookDTO.getAuthor().length()>100||bookDTO.getIsbn().length()>100||bookDTO.getTitle().length()>100)
+		{
+			return new ResponseEntity<>("Please use characters less than 100",HttpStatus.OK);
+		}
+		
 		if(bookDTO.getTotalCopies()<1) {
 			return new ResponseEntity<>("The total copies should be more than 0",HttpStatus.OK);
 		}
@@ -51,7 +55,7 @@ public class BooksService {
 		return new ResponseEntity<>("Book Saved",HttpStatus.OK);
 		}
 		else {
-		return new ResponseEntity<>("Book Already Exists",HttpStatus.OK);	
+		return new ResponseEntity<>("Book with same Title already Exists",HttpStatus.OK);	
 		}
 	}
 	public ResponseEntity<String> deleteBook(long id) {
