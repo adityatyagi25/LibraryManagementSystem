@@ -32,7 +32,7 @@ public class UsersService {
 		 if (userDTO.getPassword() == null || userDTO.getPassword().isBlank()) {
 		        return new ResponseEntity<>("Password can't be null or empty",HttpStatus.OK);
 		  }
-		 if(userDTO.getEmail().length()>=100|| userDTO.getPassword().length()>=100||userDTO.getRole().length()>=100) {
+		 if(userDTO.getEmail().length()>=100|| userDTO.getPassword().length()>=100) {
 			 return new ResponseEntity<>("Please enter characters less than 100",HttpStatus.OK);
 		 }
 		 Users user=new Users();
@@ -42,15 +42,23 @@ public class UsersService {
 		    if (!userDTO.getEmail().matches(regex)) {
 		        return ResponseEntity.ok("Please check the format of your mail id !! ");
 		    }
-		 Optional<Roles> roleEntity = rolesRepository.findByRole(userDTO.getRole());
-	        Set<Roles> roles = new HashSet<>();
-	        if (roleEntity.isPresent()) {
-	            roles.add(roleEntity.get());
-	        }
-	        else {
-	            return new ResponseEntity<>("Please use proper roles ie. (USER , ADMIN or LIBRARIAN)",HttpStatus.OK);
-	        }
-	        user.setRoles(roles);
+		    Set<Roles> rolesSet = new HashSet<>();
+
+		    for (String roleName : userDTO.getRoles()) {
+		        Optional<Roles> roleEntity = rolesRepository.findByRole(roleName);
+
+		        if (roleEntity.isPresent()) {
+		            rolesSet.add(roleEntity.get());
+		        } else {
+		            return new ResponseEntity<>(
+		                "Invalid role: " + roleName + 
+		                ". Allowed roles are USER, ADMIN, LIBRARIAN",
+		                HttpStatus.OK
+		            );
+		        }
+		    }
+
+		    user.setRoles(rolesSet);
 		if(usersRepository.findById(user.getEmail()).isPresent()) {
         return new ResponseEntity<>("User Already Exists",HttpStatus.OK);
 		

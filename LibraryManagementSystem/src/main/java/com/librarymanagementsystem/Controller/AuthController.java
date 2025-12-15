@@ -51,20 +51,17 @@ public class AuthController {
             UserPrinciple user = (UserPrinciple) authentication.getPrincipal();
             String token = jwtUtil.generateToken(user);
 
-            // ✅ Successful response
+            //  Successful response
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(Map.of(
                             "message", "Login successful",
                             "token", token
                     ));
-
+              
         } catch (BadCredentialsException ex) {
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(Map.of(
-                            "error", "Invalid password"
-                    ));
+            return new ResponseEntity<>("Incorrect Password",HttpStatus.OK);
+                     
         } catch (Exception ex) {
             // ⚠️ Unexpected error
             return ResponseEntity
