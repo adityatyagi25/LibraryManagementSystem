@@ -36,4 +36,9 @@ public class BorrowRecordsController {
 	public ResponseEntity<String> returnBook(@PathVariable long id) {
 	    return borrowRecordsService.returnBook(id);
 	}
+	@PatchMapping("/payFine/{id}/{amount}")
+	public ResponseEntity<String> payFine(@PathVariable long id , int amount){
+		return borrowRecordsService.payFine(id,amount);
+		
+	}
 }

@@ -52,7 +52,7 @@ public class UsersService {
 		        } else {
 		            return new ResponseEntity<>(
 		                "Invalid role: " + roleName + 
-		                ". Allowed roles are USER, ADMIN, LIBRARIAN",
+		                ". Allowed roles are ADMIN and  LIBRARIAN",
 		                HttpStatus.OK
 		            );
 		        }

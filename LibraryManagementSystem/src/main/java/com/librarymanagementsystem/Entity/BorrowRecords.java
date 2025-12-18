@@ -33,4 +33,5 @@ public class BorrowRecords {
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private Users user;
+    private int fine_amount=0;
 }

@@ -17,4 +17,5 @@ public class BorrowRecordsDTO {
 	private long bookId;
 	private String bookName;
 	private String userName;
+	private int fine_amount;
 }
