@@ -51,9 +51,14 @@ public class BorrowRecordsService {
 			return new ResponseEntity<>("User not found!! ", HttpStatus.OK);
 		}
 		Users existingUser = existingUsr.get();
-		if (existingBook.getAvailableCopies() == 0 || existingBook.getAvailableCopies() < 0) {
+		if (existingBook.getAvailableCopies() <= 0) {
 			return new ResponseEntity<>("There are no available copies of the book available", HttpStatus.OK);
 		}
+		if(existingUser.isVerified()==false) {
+			return new ResponseEntity<>("User is not Verified",HttpStatus.OK);
+		}
+		
+		
 		int availableCopies = existingBook.getAvailableCopies();
 		existingBook.setAvailableCopies(availableCopies - 1);
 		booksRepository.save(existingBook);
