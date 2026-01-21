@@ -24,33 +24,31 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "books", uniqueConstraints = {
-	    @UniqueConstraint(columnNames = "isbn")
-	})
+@Table(name = "books", uniqueConstraints = { @UniqueConstraint(columnNames = "isbn") })
 public class Books {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long bookId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long bookId;
 
-    @NotBlank
-    private String title;
+	@NotBlank
+	private String title;
 
-    @NotBlank
-    private String author;
+	@NotBlank
+	private String author;
 
-    @NotBlank
+	@NotBlank
 
-    private String isbn;
+	private String isbn;
 
-    @NotNull
-    private int totalCopies;
+	@NotNull
+	private int totalCopies;
 
-    private int availableCopies;
-    @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Categories category;
-    @JsonBackReference
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BorrowRecords> borrowRecords;
+	private int availableCopies;
+	@JsonBackReference
+	@ManyToOne
+	@JoinColumn(name = "category_id")
+	private Categories category;
+	@JsonBackReference
+	@OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<BorrowRecords> borrowRecords;
 }

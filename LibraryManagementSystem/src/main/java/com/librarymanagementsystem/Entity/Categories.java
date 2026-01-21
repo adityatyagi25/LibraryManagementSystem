@@ -19,13 +19,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Categories {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
- 
-    private String categoryName;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Books> books;
+	private String categoryName;
+
+	@JsonManagedReference
+	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Books> books;
 }

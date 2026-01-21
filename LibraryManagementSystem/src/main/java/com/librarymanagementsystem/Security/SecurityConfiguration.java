@@ -20,16 +20,17 @@ public class SecurityConfiguration {
 	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
 	@Autowired
-    private JwtFilter jwtAuthenticationFilter;
+	private JwtFilter jwtAuthenticationFilter;
+
 	@Bean
 	SecurityFilterChain sfc(HttpSecurity http) throws Exception {
-		return http.authorizeHttpRequests(auth -> auth.requestMatchers("/login").permitAll().requestMatchers("/admin/**").hasRole("ADMIN")
-				                                       .requestMatchers("/librarian/**","/addBook","/updateBook","/deleteBook","/findAllRecords","/findRecordsById")
-				                                       .hasRole("LIBRARIAN").requestMatchers("/borrowBook","/returnBook").hasRole("USER").anyRequest().permitAll())
+		return http
+				.authorizeHttpRequests(
+						auth -> auth.requestMatchers("/login").permitAll().requestMatchers("/admin/**").hasRole("ADMIN")
+								.requestMatchers("/librarian/**").hasRole("LIBRARIAN").anyRequest().permitAll())
 				.csrf(csrf -> csrf.disable())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-.build();				
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
 	}
 
 	@Bean
@@ -44,8 +45,9 @@ public class SecurityConfiguration {
 		ap.setPasswordEncoder(passwordEncoder());
 		return ap;
 	}
-	  @Bean
-	    AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-	        return config.getAuthenticationManager();
-	    }
+
+	@Bean
+	AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+		return config.getAuthenticationManager();
+	}
 }

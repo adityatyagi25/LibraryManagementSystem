@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoriesDTO {
-	 private String categoryName;
+	private String categoryName;
 }

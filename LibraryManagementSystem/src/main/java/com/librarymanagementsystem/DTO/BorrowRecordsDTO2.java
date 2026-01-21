@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BorrowRecordsDTO2 {
-   private String bookName;
-   private String userEmail;
+	private String bookName;
+	private String userEmail;
 }

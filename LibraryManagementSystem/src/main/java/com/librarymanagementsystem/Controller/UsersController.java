@@ -19,11 +19,13 @@ import jakarta.validation.Valid;
 public class UsersController {
 	@Autowired
 	private UsersService usersService;
+
 	@PostMapping("/addUser")
 	public ResponseEntity<String> addUser(@Valid @RequestBody UsersDTO userDTO) {
 		return usersService.addUser(userDTO);
-		
+
 	}
+
 	@DeleteMapping("/deleteUser")
 	public ResponseEntity<String> deleteUser(@RequestParam String email) {
 		return usersService.deleteUser(email);

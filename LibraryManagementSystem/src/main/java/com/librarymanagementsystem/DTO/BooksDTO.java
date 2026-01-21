@@ -13,8 +13,8 @@ public class BooksDTO {
 	private String author;
 
 	private String isbn;
-    
-    private int totalCopies;
-    
-    private String category;
+
+	private int totalCopies;
+
+	private String category;
 }

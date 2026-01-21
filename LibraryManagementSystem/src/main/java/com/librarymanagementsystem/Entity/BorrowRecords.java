@@ -21,17 +21,18 @@ import lombok.NoArgsConstructor;
 public class BorrowRecords {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long borrow_id;
-	private LocalDate borrow_date;
-	private LocalDate due_date;
-	private LocalDate return_date;
-    @JsonManagedReference
+	private long borrowId;
+	private LocalDate borrowDate;
+	private LocalDate dueDate;
+	private LocalDate returnDate;
+	@JsonManagedReference
 	@ManyToOne
 	@JoinColumn(name = "book_id")
 	private Books book;
-    @JsonManagedReference
+	@JsonManagedReference
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private Users user;
-    private int fine_amount=0;
+	private int fineAmount = 0;
+	private boolean isFineReturned;
 }

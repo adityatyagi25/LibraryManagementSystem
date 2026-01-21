@@ -9,20 +9,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.librarymanagementsystem.Entity.Users;
 
-public class UserPrinciple implements UserDetails
-{
-    private Users user;
+public class UserPrinciple implements UserDetails {
+	private Users user;
+
 	public UserPrinciple(Users user) {
-		this.user=user;
+		this.user = user;
 	}
 
 	@Override
 	public Set<GrantedAuthority> getAuthorities() {
-	    return user.getRoles().stream()
-	            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRole()))
-	            .collect(Collectors.toSet());
+		return user.getRoles().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRole()))
+				.collect(Collectors.toSet());
 	}
-
 
 	@Override
 	public String getPassword() {
@@ -32,6 +30,6 @@ public class UserPrinciple implements UserDetails
 	@Override
 	public String getUsername() {
 		return user.getEmail();
-	}   
+	}
 
 }

@@ -12,39 +12,28 @@ import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
-	 @Value("${jwt.secret}")
-    private String secretKey ;
+	@Value("${jwt.secret}")
+	private String secretKey;
 
-    public String generateToken(UserDetails userDetails) {
-        return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 )) //(1 ghnta )
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)
-                .compact();
-    }
+	public String generateToken(UserDetails userDetails) {
+		return Jwts.builder().setSubject(userDetails.getUsername()).setIssuedAt(new Date(System.currentTimeMillis()))
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // (1 ghnta )
+				.signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256).compact();
+	}
 
-    public String getUsername(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
-    }
+	public String getUsername(String token) {
+		return Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes())).build()
+				.parseClaimsJws(token).getBody().getSubject();
+	}
 
-    public boolean validateToken(String token, UserDetails userDetails) {
-        String username = getUsername(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
-    }
+	public boolean validateToken(String token, UserDetails userDetails) {
+		String username = getUsername(token);
+		return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+	}
 
-    private boolean isTokenExpired(String token) {
-        Date expiration = Jwts.parserBuilder()
-                .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getExpiration();
-        return expiration.before(new Date());
-    }
+	private boolean isTokenExpired(String token) {
+		Date expiration = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes())).build()
+				.parseClaimsJws(token).getBody().getExpiration();
+		return expiration.before(new Date());
+	}
 }

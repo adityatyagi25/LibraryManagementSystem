@@ -11,18 +11,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.librarymanagementsystem.DTO.RolesDTO;
 import com.librarymanagementsystem.Service.RolesService;
+
 @RestController
 @RequestMapping("/admin")
 public class RolesController {
-    @Autowired
+	@Autowired
 	private RolesService rolesService;
-    @PostMapping("/addRole")
-    public ResponseEntity<String> addRole(@RequestBody RolesDTO role) {
-    	return rolesService.addRole(role);
-    }
-    @DeleteMapping("/deleteRole/{id}")
-    public ResponseEntity<String> deleteRole(@PathVariable int id){
-    	return rolesService.deleteRole(id);
-    }
-    
+
+	@PostMapping("/addRole")
+	public ResponseEntity<String> addRole(@RequestBody RolesDTO role) {
+		return rolesService.addRole(role);
+	}
+
+	@DeleteMapping("/deleteRole/{id}")
+	public ResponseEntity<String> deleteRole(@PathVariable int id) {
+		return rolesService.deleteRole(id);
+	}
+
 }

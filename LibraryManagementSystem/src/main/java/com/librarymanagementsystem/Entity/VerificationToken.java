@@ -19,17 +19,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class VerificationToken {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private String token;
+	private String token;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    private Users user;
+	@OneToOne(fetch = FetchType.EAGER)
+	private Users user;
 
-    private LocalDateTime expiryDate;
-    @Enumerated
-    private Status status;
-   
+	private LocalDateTime expiryDate;
+	@Enumerated
+	private Status status;
+
 }
