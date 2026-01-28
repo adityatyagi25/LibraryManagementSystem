@@ -33,6 +33,7 @@ public class BorrowRecords {
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private Users user;
-	private int fineAmount = 0;
+	private long fineAmount = 0;
+	private long fineCollected=0;
 	private boolean isFineReturned;
 }

@@ -1,6 +1,5 @@
 package com.librarymanagementsystem.Controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,8 +17,12 @@ import com.librarymanagementsystem.Service.BooksService;
 @RestController
 @RequestMapping("/librarian")
 public class BooksController {
-	@Autowired
-    private BooksService booksService;
+    private final BooksService booksService;
+        public BooksController(BooksService booksService) {
+            this.booksService = booksService;
+        }
+    
+
 	@PostMapping("/addBook")
 	public ResponseEntity<String> addBook(@RequestBody BooksDTO book) {
 		return booksService.addBook(book);

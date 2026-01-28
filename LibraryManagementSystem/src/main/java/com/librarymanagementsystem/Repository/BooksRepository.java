@@ -27,5 +27,5 @@ public interface BooksRepository extends JpaRepository<Books, Long> {
 
 	@Query(value = "SELECT SUM(available_copies) FROM books", nativeQuery = true)
 	Integer getAvailableBooks();
-
+	
 }

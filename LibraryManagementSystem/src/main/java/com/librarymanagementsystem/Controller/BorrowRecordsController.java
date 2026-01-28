@@ -52,7 +52,7 @@ public class BorrowRecordsController {
 	}
 
 	@PatchMapping("/payFine/{id}/{amount}")
-	public ResponseEntity<String> payFine(@PathVariable long id, int amount) {
+	public ResponseEntity<String> payFine(@PathVariable long id, Long amount) {
 		return borrowRecordsService.payFine(id, amount);
 
 	}

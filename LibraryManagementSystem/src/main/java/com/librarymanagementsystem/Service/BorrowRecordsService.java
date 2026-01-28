@@ -2,7 +2,6 @@ package com.librarymanagementsystem.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -14,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.librarymanagementsystem.DTO.BorrowRecordsDTO;
 import com.librarymanagementsystem.DTO.BorrowRecordsDTO2;
@@ -89,7 +89,7 @@ public class BorrowRecordsService {
 	
 	// Untested Code    
 	
-	
+	@Transactional
 	public ResponseEntity<String> borrowBook(BorrowRecordsDTO2 borrowRecords) {
 		Optional<Books> existingBok = booksRepository.findByTitle(borrowRecords.getBookName());
 		if (existingBok.isEmpty()) {
@@ -121,7 +121,7 @@ public class BorrowRecordsService {
 
 		return new ResponseEntity<>("Book Borrowed", HttpStatus.OK);
 	}
-
+	@Transactional
 	public ResponseEntity<String> returnBook(long id) {
 		Optional<BorrowRecords> borrowRecords = borrowRecordsRepository.findById(id);
 		if(borrowRecords.isEmpty()) {
@@ -153,20 +153,20 @@ public class BorrowRecordsService {
 			return new ResponseEntity<>("Book Already Returned", HttpStatus.OK);
 		}
 	}
-
-	public ResponseEntity<String> payFine(long id, int amount) {
+	@Transactional
+	public ResponseEntity<String> payFine(long id, long amount) {
 		Optional<BorrowRecords> borrowRecords = borrowRecordsRepository.findById(id);
 		if(borrowRecords.isEmpty()) {
 			return new ResponseEntity<>("No Record Found !!", HttpStatus.OK);
 		}
 		BorrowRecords br=borrowRecords.get();
-		int amountLeft=br.getFineAmount()-amount;
+		long amountLeft=br.getFineAmount()-amount;
 		if(amountLeft<0) {
 			return new ResponseEntity<>("You are returning amount more than fine !! Your fine amount is "+br.getFineAmount(),HttpStatus.OK);
 		}
-		// Boolean (is fine returned) Not Tested
+		br.setFineCollected(br.getFineCollected()+amount);
 		br.setFineAmount(amountLeft);
-		if(amountLeft<=0) {
+		if(amountLeft==0) {
 			br.setFineReturned(true);
 		}
 		borrowRecordsRepository.save(br);

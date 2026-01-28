@@ -12,4 +12,5 @@ public interface UsersRepository extends JpaRepository<Users, String> {
 	
 	Integer countByIsVerifiedFalse();
 
+
 }
