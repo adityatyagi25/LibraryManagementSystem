@@ -1,3 +1,4 @@
+
 package com.librarymanagementsystem.Entity;
 
 import java.util.List;
@@ -28,4 +29,6 @@ public class Categories {
 	@JsonManagedReference
 	@OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Books> books;
+	
+	private boolean status;  
 }

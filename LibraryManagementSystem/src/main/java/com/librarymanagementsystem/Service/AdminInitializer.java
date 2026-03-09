@@ -33,6 +33,7 @@ public class AdminInitializer implements CommandLineRunner {
 		logger.info("Checking if ADMIN role is present or not");
 		Roles adminRole = roleRepository.findById(1).orElseGet(() -> {
 			Roles role = new Roles();
+			role.setStatus(true);
 			role.setRole("ADMIN");
 			return roleRepository.save(role);
 		});
@@ -40,6 +41,7 @@ public class AdminInitializer implements CommandLineRunner {
 		Roles librarianRole = roleRepository.findById(2).orElseGet(() -> {
 			Roles role = new Roles();
 			role.setRole("LIBRARIAN");
+			role.setStatus(true);
 			return roleRepository.save(role);
 		});
 		logger.info("Checking if \"admin@gmail.com\" is present or not");
@@ -48,22 +50,24 @@ public class AdminInitializer implements CommandLineRunner {
 			admin.setEmail("admin@gmail.com");
 			admin.setPassword(passwordEncoder.encode("admin"));
 			admin.setVerified(true);
+			admin.setStatus(true);
 			admin.setRoles(Set.of(adminRole));
 			userRepository.save(admin);
 			logger.info("✅ Admin user created: admin@gmail.com / password: admin");
 		}
 		logger.info("Category Action present or not??");
-		createCategoryIfNotExists("Action");
+		createCategoryIfNotExists("ACTION");
 		logger.info("Category Action present or not??");
-		createCategoryIfNotExists("Drama");
+		createCategoryIfNotExists("DRAMA");
 		logger.info("Category Action present or not??");
-		createCategoryIfNotExists("Thriller");
+		createCategoryIfNotExists("THRILLER");
 	}
 
 	private void createCategoryIfNotExists(String name) {
 		Optional<Categories> categoryy = categoriesRepository.findByCategoryName(name);
 		if (categoryy.isEmpty()) {
 			Categories category = new Categories();
+			category.setStatus(true);
 			category.setCategoryName(name);
 			;
 			categoriesRepository.save(category);

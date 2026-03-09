@@ -18,14 +18,15 @@ public interface BooksRepository extends JpaRepository<Books, Long> {
 
 	Optional<Books> findByIsbn(String isbn);
 
-	Page<Books> findAllByCategory(Categories categories, Pageable pageable);
+	Page<Books> findAllByCategoryAndStatusTrue(Categories category, Pageable pageable);
 
 	@Query(value = "SELECT SUM(total_copies) FROM books", nativeQuery = true)
 	Integer getTotalBooks();
 
-	Page<Books> findAllByAuthor(String author, Pageable pageable);
+	Page<Books> findAllByAuthorAndStatusTrue(String author, Pageable pageable);
 
 	@Query(value = "SELECT SUM(available_copies) FROM books", nativeQuery = true)
 	Integer getAvailableBooks();
 	
+    Page<Books> findByStatusTrue(Pageable pageable);
 }

@@ -35,7 +35,7 @@ public class AuthController {
 	public ResponseEntity<?> login(@RequestBody LoginDTO login) {
 		String email = login.getEmail();
 		String password = login.getPassword();
-		if (usersRepository.findById(email).isEmpty()) {
+		if (usersRepository.findById(email).isEmpty()|| usersRepository.findById(email).get().isStatus()==false) {
 			return new ResponseEntity<>("User not Found with id " + email, HttpStatus.OK);
 		}
 		if (usersRepository.findById(email).get().isVerified() == false) {

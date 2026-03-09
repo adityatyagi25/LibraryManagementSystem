@@ -29,13 +29,9 @@ public class ReportController {
 	public ResponseEntity<Integer> issuedBooks(){
 		return reportService.issuedBooks();
 	}
-    @GetMapping("/verifiedUsers")
-	public ResponseEntity<Integer> verifiedUsers(){
-    	return reportService.verifiedUsers();
-	}
-	@GetMapping("/unverifiedUsers")
-	public ResponseEntity<Integer> unverifiedUsers(){
-		return reportService.unverifiedUsers();
+    @GetMapping("/verifiedUnverifiedUsers")
+	public ResponseEntity<Integer> verifiedUsers(@RequestParam boolean inp){
+    	return reportService.verifiedUnverifiedUsers(inp);
 	}
 	@GetMapping("/booksIssuedBetween")
 	public ResponseEntity<List<BorrowRecordsDTO>> booksIssuedBetween(

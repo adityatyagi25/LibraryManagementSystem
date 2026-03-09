@@ -51,4 +51,6 @@ public class Books {
 	@JsonBackReference
 	@OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<BorrowRecords> borrowRecords;
+	
+	private boolean status;
 }

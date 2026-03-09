@@ -12,50 +12,86 @@ import org.springframework.stereotype.Service;
 import com.librarymanagementsystem.DTO.CategoriesDTO;
 import com.librarymanagementsystem.DTO.CategoriesDTO2;
 import com.librarymanagementsystem.Entity.Categories;
-import com.librarymanagementsystem.Exception.CategoryNotFoundException;
 import com.librarymanagementsystem.Repository.CategoriesRepository;
 
 @Service
 public class CategoriesService {
-	@Autowired
-	private CategoriesRepository categoriesRepository;
 
-	public ResponseEntity<String> addCategory(CategoriesDTO categoryDto) {
-		Optional<Categories> checking = categoriesRepository.findByCategoryName(categoryDto.getCategoryName());
-		if (checking.isPresent()) {
-			return new ResponseEntity<>("Category Already Present", HttpStatus.OK);
-		}
-		if (categoryDto.getCategoryName().length() > 20 || categoryDto.getCategoryName().length() < 2) {
-			return new ResponseEntity<>("Please use characters between 2 and 20", HttpStatus.OK);
-		}
-		Categories category = new Categories();
-		category.setCategoryName(categoryDto.getCategoryName());
-		categoriesRepository.save(category);
-		return new ResponseEntity<>("Category Added", HttpStatus.OK);
+    @Autowired
+    private CategoriesRepository categoriesRepository;
 
-	}
+    public ResponseEntity<String> addCategory(CategoriesDTO categoryDto) {
 
-	public ResponseEntity<String> deleteCategory(int id) {
-		Optional<Categories> category = categoriesRepository.findById(id);
-		if (category.isPresent()) {
-			categoriesRepository.deleteById(id);
-			return new ResponseEntity<>("Category Deleted", HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>("Category with ID " + id + " not found", HttpStatus.OK);
-		}
-	}
+   
+        if (categoryDto.getCategoryName() == null || categoryDto.getCategoryName().isBlank()) {
+            return new ResponseEntity<>("Category name cannot be empty", HttpStatus.OK);
+        }
 
-	public List<CategoriesDTO2> getAllCategories() {
-		List<Categories> list = categoriesRepository.findAll();
-		List<CategoriesDTO2> dtoList = new ArrayList<>();
+        String categoryName = categoryDto.getCategoryName().trim().toUpperCase();
 
-		for (Categories category : list) {
-			CategoriesDTO2 dto = new CategoriesDTO2();
-			dto.setId(category.getId());
-			dto.setCategoryName(category.getCategoryName());
-			dtoList.add(dto);
-		}
-		return dtoList;
-	}
+        if (categoryName.length() < 2 || categoryName.length() > 20) {
+            return new ResponseEntity<>(
+                "Please use characters between 2 and 20",
+                HttpStatus.OK
+            );
+        }
 
+        Optional<Categories> existingCategory =
+                categoriesRepository.findByCategoryName(categoryName);
+
+     
+        if (existingCategory.isPresent() && existingCategory.get().isStatus()) {
+            return new ResponseEntity<>("Category already present", HttpStatus.OK);
+        }
+
+
+        if (existingCategory.isPresent()) {
+            Categories category = existingCategory.get();
+            category.setStatus(true);
+            categoriesRepository.save(category);
+            return new ResponseEntity<>("Category reactivated", HttpStatus.OK);
+        }
+
+        // New category
+        Categories category = new Categories();
+        category.setCategoryName(categoryName);
+        category.setStatus(true);
+        categoriesRepository.save(category);
+
+        return new ResponseEntity<>("Category added successfully", HttpStatus.OK);
+    }
+
+    public ResponseEntity<String> deleteCategory(int id) {
+
+        Optional<Categories> categoryOptional = categoriesRepository.findById(id);
+
+        if (categoryOptional.isEmpty()) {
+            return new ResponseEntity<>("Category not found", HttpStatus.OK);
+        }
+
+        Categories category = categoryOptional.get();
+
+        if (!category.isStatus()) {
+            return new ResponseEntity<>("Category already deleted", HttpStatus.OK);
+        }
+
+        category.setStatus(false);
+        categoriesRepository.save(category);
+
+        return new ResponseEntity<>("Category deleted successfully", HttpStatus.OK);
+    }
+
+    public List<CategoriesDTO2> getAllCategories() {
+
+        List<Categories> categories = categoriesRepository.findByStatusTrue();
+        List<CategoriesDTO2> dtoList = new ArrayList<>();
+
+        for (Categories category : categories) {
+            CategoriesDTO2 dto = new CategoriesDTO2();
+            dto.setId(category.getId());
+            dto.setCategoryName(category.getCategoryName());
+            dtoList.add(dto);
+        }
+        return dtoList;
+    }
 }

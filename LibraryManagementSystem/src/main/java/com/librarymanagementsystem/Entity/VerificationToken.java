@@ -22,10 +22,8 @@ public class VerificationToken {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
 	private String token;
-
-	@OneToOne(fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.EAGER) 
 	private Users user;
 
 	private LocalDateTime expiryDate;

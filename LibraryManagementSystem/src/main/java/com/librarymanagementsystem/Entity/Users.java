@@ -31,9 +31,7 @@ public class Users {
 	@NotBlank(message = "Email cannot be blank")
 	@Email(message = "Invalid email format")
 	private String email;
-
 	@NotBlank(message = "Password cannot be blank")
-
 	private String password;
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -41,10 +39,10 @@ public class Users {
 	private boolean isVerified;
 	@OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
 	private VerificationToken verificationToken;
-
-	// Adding on 13 January , Test all functionalities before updating on GIT //
-	// Working well
 	@JsonBackReference
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<BorrowRecords> borrowRecords = new ArrayList<>();
+
+	private boolean status;
+
 }

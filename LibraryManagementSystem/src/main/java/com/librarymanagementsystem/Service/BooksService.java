@@ -68,6 +68,7 @@ public class BooksService {
 
 			book.setIsbn(bookDTO.getIsbn());
 			book.setTitle(bookDTO.getTitle());
+			book.setStatus(true);
 			booksRepository.save(book);
 			return new ResponseEntity<>("Book Saved", HttpStatus.OK);
 		} else {
@@ -76,12 +77,13 @@ public class BooksService {
 	}
 
 	public ResponseEntity<String> deleteBook(long id) {
-		Optional<Books> book = booksRepository.findById(id);
-		if (book.isEmpty()) {
+		Optional<Books> optionalBook = booksRepository.findById(id);
+		if (optionalBook.isEmpty()) {
 			return new ResponseEntity<>("Book Not Found", HttpStatus.OK);
 		}
-
-		booksRepository.deleteById(id);
+        Books book=optionalBook.get();
+        book.setStatus(false);
+        booksRepository.save(book);
 		return new ResponseEntity<>("Book Deleted", HttpStatus.OK);
 	}
 
@@ -91,6 +93,9 @@ public class BooksService {
 			return new ResponseEntity<>("No Book found with id" + id, HttpStatus.OK);
 		}
 		Books books = book.get();
+		if(books.isStatus()==false) {
+			return new ResponseEntity<>("Book is inactive / Deleted", HttpStatus.OK);
+		}
 		return new ResponseEntity<>(books, HttpStatus.OK);
 	}
 
@@ -119,7 +124,7 @@ public class BooksService {
 
 		Pageable pageable = PageRequest.of(page, size, sort);
 
-		return booksRepository.findAll(pageable);
+		return booksRepository.findByStatusTrue(pageable);
 	}
 
 	public ResponseEntity<?> findBookByCategory(String category, int page, int size, String sortBy, String sortDir) {
@@ -157,7 +162,9 @@ public class BooksService {
 
 		Pageable pageable = PageRequest.of(page, size, sort);
 
-		Page<Books> booksPage = booksRepository.findAllByCategory(optionalCategory.get(), pageable);
+		Page<Books> booksPage =
+		        booksRepository.findAllByCategoryAndStatusTrue(optionalCategory.get(), pageable);
+
 
 		return new ResponseEntity<>(booksPage, HttpStatus.OK);
 	}
@@ -187,7 +194,9 @@ public class BooksService {
 
 		Pageable pageable = PageRequest.of(page, size, sort);
 		
-		Page<Books> booksPage = booksRepository.findAllByAuthor(author, pageable);
+		Page<Books> booksPage =
+		        booksRepository.findAllByAuthorAndStatusTrue(author, pageable);
+
 		return new ResponseEntity<>(booksPage, HttpStatus.OK);
 		
 	}

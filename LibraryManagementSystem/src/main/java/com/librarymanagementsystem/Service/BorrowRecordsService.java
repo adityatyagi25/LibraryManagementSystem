@@ -2,6 +2,7 @@ package com.librarymanagementsystem.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -17,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.librarymanagementsystem.DTO.BorrowRecordsDTO;
 import com.librarymanagementsystem.DTO.BorrowRecordsDTO2;
+import com.librarymanagementsystem.DTO.MostLeastBorrowedBooksDTO;
+import com.librarymanagementsystem.DTO.UserCategoryDTO;
 import com.librarymanagementsystem.Entity.Books;
 import com.librarymanagementsystem.Entity.BorrowRecords;
 import com.librarymanagementsystem.Entity.Users;
@@ -85,10 +88,6 @@ public class BorrowRecordsService {
 	                .map(BorrowRecordsMapper::toDto);
 	    }
 	
-	
-	
-	// Untested Code    
-	
 	@Transactional
 	public ResponseEntity<String> borrowBook(BorrowRecordsDTO2 borrowRecords) {
 		Optional<Books> existingBok = booksRepository.findByTitle(borrowRecords.getBookName());
@@ -103,6 +102,9 @@ public class BorrowRecordsService {
 		Users existingUser = existingUsr.get();
 		if (existingBook.getAvailableCopies() <= 0) {
 			return new ResponseEntity<>("There are no available copies of the book available", HttpStatus.OK);
+		}
+		if(existingUser.isStatus()==false) {
+			return new ResponseEntity<>("User inactive/deleted",HttpStatus.OK);
 		}
 		if(existingUser.isVerified()==false) {
 			return new ResponseEntity<>("User is not Verified",HttpStatus.OK);
@@ -174,5 +176,74 @@ public class BorrowRecordsService {
 		
 		
 	}
+
+	public Page<BorrowRecordsDTO> findRecordsByUser(
+	        String email,
+	        int page,
+	        int size,
+	        String sortBy,
+	        String direction) {
+
+	    if (page < 0) page = 0;
+
+	    if (size <= 0 || size > MAX_PAGE_SIZE) size = 10;
+
+	    if (!ALLOWED_SORT_FIELDS.contains(sortBy)) {
+	        sortBy = "borrowId";
+	    }
+
+	    Sort sort = "desc".equalsIgnoreCase(direction)
+	            ? Sort.by(sortBy).descending()
+	            : Sort.by(sortBy).ascending();
+
+	    Pageable pageable = PageRequest.of(page, size, sort);
+
+	    return borrowRecordsRepository
+	            .findByUserEmail(email, pageable)
+	            .map(BorrowRecordsMapper::toDto);
+	}
+
+	public Page<BorrowRecordsDTO> findRecordsByBook(
+	        long bookId,
+	        int page,
+	        int size,
+	        String sortBy,
+	        String direction) {
+
+	    if (page < 0) page = 0;
+
+	    if (size <= 0 || size > MAX_PAGE_SIZE) size = 10;
+
+	    if (!ALLOWED_SORT_FIELDS.contains(sortBy)) {
+	        sortBy = "borrowId";
+	    }
+
+	    Sort sort = "desc".equalsIgnoreCase(direction)
+	            ? Sort.by(sortBy).descending()
+	            : Sort.by(sortBy).ascending();
+
+	    Pageable pageable = PageRequest.of(page, size, sort);
+
+	    return borrowRecordsRepository
+	            .findByBookBookId(bookId, pageable)
+	            .map(BorrowRecordsMapper::toDto);
+	}
+
+	public List<UserCategoryDTO> intrestedCategory(String email) {
+	return borrowRecordsRepository.userCategoryDTO(email);
+	}
+
+	public String favouriteCategory(String email) {
+	  return borrowRecordsRepository.favouriteCategory(email);
+	}
+
+	public MostLeastBorrowedBooksDTO mostBorrowedBook() {
+		return borrowRecordsRepository.mostBorrowedBook();
+	}
+
+	public MostLeastBorrowedBooksDTO leastBorrowedBook() {
+		return borrowRecordsRepository.leastBorrowedBook();	
+	}
+
 
 }

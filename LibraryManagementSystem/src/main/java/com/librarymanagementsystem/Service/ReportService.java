@@ -37,12 +37,13 @@ public class ReportService {
 		return new ResponseEntity<>(bookRepository.getTotalBooks()-bookRepository.getAvailableBooks(),HttpStatus.OK);
 	}
 
-	public ResponseEntity<Integer> verifiedUsers() {
+	public ResponseEntity<Integer> verifiedUnverifiedUsers(boolean inp) {
+		if(inp==true) {
 		return new ResponseEntity<>(userRepository.countByIsVerifiedTrue(),HttpStatus.OK);
-	}
-
-	public ResponseEntity<Integer> unverifiedUsers() {
+		}
+		else {
 		return new ResponseEntity<>(userRepository.countByIsVerifiedFalse(),HttpStatus.OK);
+		}
 	}
 
 	public ResponseEntity<List<BorrowRecordsDTO>> booksIssuedBetween(LocalDate startDate,LocalDate endDate) {

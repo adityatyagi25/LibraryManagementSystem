@@ -17,4 +17,5 @@ public class Roles {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String role;
+	private boolean status;
 }

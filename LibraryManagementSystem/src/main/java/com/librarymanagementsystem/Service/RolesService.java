@@ -13,35 +13,67 @@ import com.librarymanagementsystem.Repository.RolesRepository;
 
 @Service
 public class RolesService {
-	@Autowired
-	private RolesRepository rolesRepository;
 
-	public ResponseEntity<String> addRole(RolesDTO role) {
-		if(role.getRole().length()>100) {
-			return new ResponseEntity<>("Please use characters less than 100", HttpStatus.OK);
-		}
-		Optional<Roles> roles = rolesRepository.findByRole(role.getRole());
-		if (role.getRole().length() > 20 || role.getRole().length() < 2) {
-			return new ResponseEntity<>("Please use 2-20 characters... ", HttpStatus.OK);
-		}
-		if (roles.isPresent()) {
-			return new ResponseEntity<>("Role Already Exists ", HttpStatus.OK);
-		} else {
-			Roles rolee = new Roles();
-			rolee.setRole(role.getRole());
-			rolesRepository.save(rolee);
-			return new ResponseEntity<>("Role Added ", HttpStatus.OK);
-		}
-	}
+    @Autowired
+    private RolesRepository rolesRepository;
 
-	public ResponseEntity<String> deleteRole(int id) {
-		Optional<Roles> roles = rolesRepository.findById(id);
-		if (roles.isPresent()) {
-			rolesRepository.deleteById(id);
-			return new ResponseEntity<>("Role Deleted ", HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>("Role with id " + id + " is not found", HttpStatus.OK);
-		}
-	}
+    public ResponseEntity<String> addRole(RolesDTO roleDto) {
 
+  
+        if (roleDto.getRole() == null || roleDto.getRole().isBlank()) {
+            return new ResponseEntity<>("Role name cannot be empty", HttpStatus.OK);
+        }
+
+        String roleName = roleDto.getRole().trim().toUpperCase();
+
+        // Length validation
+        if (roleName.length() < 2 || roleName.length() > 20) {
+            return new ResponseEntity<>(
+                "Role name must be between 2 and 20 characters",
+                HttpStatus.OK
+            );
+        }
+
+        Optional<Roles> existingRole = rolesRepository.findByRole(roleName);
+        
+        if (existingRole.isPresent() && existingRole.get().isStatus()) {
+            return new ResponseEntity<>("Role already exists", HttpStatus.OK);
+        }
+
+        if (existingRole.isPresent()) {
+            Roles role = existingRole.get();
+            role.setStatus(true);
+            rolesRepository.save(role);
+            return new ResponseEntity<>("Role reactivated successfully", HttpStatus.OK);
+        }
+
+     
+        Roles newRole = new Roles();
+        newRole.setRole(roleName);
+        newRole.setStatus(true);
+        rolesRepository.save(newRole);
+
+        return new ResponseEntity<>("Role added successfully", HttpStatus.OK);
+    }
+
+    public ResponseEntity<String> deleteRole(int id) {
+
+        Optional<Roles> roleOptional = rolesRepository.findById(id);
+
+        if (roleOptional.isEmpty()) {
+            return new ResponseEntity<>("Role not found", HttpStatus.OK);
+        }
+
+        Roles role = roleOptional.get();
+
+        if (!role.isStatus()) {
+            return new ResponseEntity<>("Role already deleted", HttpStatus.OK);
+        }
+
+        role.setStatus(false);
+        rolesRepository.save(role);
+
+        return new ResponseEntity<>("Role deleted successfully", HttpStatus.OK);
+    }
 }
+
