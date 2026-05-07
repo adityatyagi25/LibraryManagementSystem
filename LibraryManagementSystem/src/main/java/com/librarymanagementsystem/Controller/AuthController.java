@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +31,7 @@ public class AuthController {
 		this.authManager = authManager;
 		this.jwtUtil = jwtUtil;
 	}
-
+	@CrossOrigin(origins = "*") 
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody LoginDTO login) {
 		String email = login.getEmail();
