@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,10 @@ public class AdminInitializer implements CommandLineRunner {
 	private final RolesRepository roleRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final CategoriesRepository categoriesRepository;
+	@Value("${app.bootstrap-admin.email:}")
+	private String bootstrapAdminEmail;
+	@Value("${app.bootstrap-admin.password:}")
+	private String bootstrapAdminPassword;
 	private static final Logger logger = LoggerFactory.getLogger(AdminInitializer.class);
 
 	@Override
@@ -44,22 +49,21 @@ public class AdminInitializer implements CommandLineRunner {
 			role.setStatus(true);
 			return roleRepository.save(role);
 		});
-		logger.info("Checking if \"admin@gmail.com\" is present or not");
-		if(!userRepository.existsById("admin@gmail.com")){
+		if (bootstrapAdminEmail.isBlank() != bootstrapAdminPassword.isBlank()) {
+			throw new IllegalStateException("Set both BOOTSTRAP_ADMIN_EMAIL and BOOTSTRAP_ADMIN_PASSWORD, or leave both empty");
+		}
+		if (!bootstrapAdminEmail.isBlank() && !userRepository.existsById(bootstrapAdminEmail)) {
 			Users admin = new Users();	
-			admin.setEmail("admin@gmail.com");
-			admin.setPassword(passwordEncoder.encode("admin"));
+			admin.setEmail(bootstrapAdminEmail);
+			admin.setPassword(passwordEncoder.encode(bootstrapAdminPassword));
 			admin.setVerified(true);
 			admin.setStatus(true);
 			admin.setRoles(Set.of(adminRole));
 			userRepository.save(admin);
-			logger.info("✅ Admin user created: admin@gmail.com / password: admin");
+			logger.info("Bootstrap administrator created for {}", bootstrapAdminEmail);
 		}
-		logger.info("Category Action present or not??");
 		createCategoryIfNotExists("ACTION");
-		logger.info("Category Action present or not??");
 		createCategoryIfNotExists("DRAMA");
-		logger.info("Category Action present or not??");
 		createCategoryIfNotExists("THRILLER");
 	}
 
@@ -69,9 +73,8 @@ public class AdminInitializer implements CommandLineRunner {
 			Categories category = new Categories();
 			category.setStatus(true);
 			category.setCategoryName(name);
-			;
 			categoriesRepository.save(category);
-			logger.info("Category Created", name);
+			logger.info("Category created: {}", name);
 		}
 	}
 

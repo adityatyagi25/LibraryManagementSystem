@@ -15,7 +15,8 @@ public class SwaggerConfig {
 	@Bean
 	OpenAPI customOpenAPI() {
 		return new OpenAPI()
-				.info(new Info().title("My API").version("1.0.0").description("API Documentation with Login"))
+				.info(new Info().title("Library Management System API").version("1.0.0")
+						.description("REST API for library users, books, borrowing, returns, and reports."))
 
 				// Add JWT Bearer Authentication
 				.components(new Components().addSecuritySchemes("bearerAuth",
